@@ -4,7 +4,11 @@ const category = new mongoose.Schema(
   {
     name: String,
     description: String,
-    image:String
+    image: String,
+    isdisable: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );

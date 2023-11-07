@@ -1,6 +1,6 @@
 import express from "express";
 import { deleteQuotes, getIdQuotes, getallQuotes, manageQuotes, updateQuotes } from "../controller.js/quotes-controller.js";
-import { addCategory } from "../controller.js/category-controller.js";
+import { addCategory, deleteCategory, getCategory, updateCategory } from "../controller.js/category-controller.js";
 import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -30,6 +30,9 @@ const upload = multer({
 });
 
 route.post('/category/add',upload.single('image'),addCategory)
+route.get('/category/get',getCategory)
+route.put('/category/update/:id',updateCategory)
+route.delete('/category/delete/:id',deleteCategory)
 
 route.post('/quotes/add',manageQuotes)
 route.get('/quotes/get',getallQuotes)

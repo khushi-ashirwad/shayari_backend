@@ -2,9 +2,8 @@ import mongoose from "mongoose";
 
 const quotesSchema = new mongoose.Schema(
   {
-    customeId: Number,
     quotes: String,
-    category: String,
+    category: { type: mongoose.Schema.ObjectId, ref: "category" },
   },
   {
     timestamps: true,
