@@ -1,4 +1,4 @@
-import { request, response } from "express";
+
 import Quotes from "../modal/quotes.js";
 
 export const manageQuotes = async (request, response) => {
@@ -7,6 +7,7 @@ export const manageQuotes = async (request, response) => {
     await newItem.save();
     response.status(200).json(newItem);
   } catch (error) {
+    console.log("error",error);
     response.status(500).json({ error: "Error creating the Quotes" });
   }
 };

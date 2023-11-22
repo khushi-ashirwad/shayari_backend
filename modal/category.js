@@ -4,7 +4,8 @@ const category = new mongoose.Schema(
   {
     name: String,
     description: String,
-    image: String,
+    file: String,
+    type:String,
     isdisable: {
       type: Boolean,
       default: true,

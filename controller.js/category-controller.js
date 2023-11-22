@@ -1,12 +1,16 @@
 
 import Category from "../modal/category.js";
+import fs from "fs"
 
 export const addCategory = async (request, response) => {
   try {
+    if (!request.file) {
+      return response.status(400).send('No file uploaded.');
+    }
     const newImage = new Category({
       name: request.body.name,
       description: request.body.description,
-      image: request.file.path,
+      file: `http://localhost:8001/${request.file.filename}`,
     });
     newImage
       .save()
@@ -37,7 +41,8 @@ export const updateCategory = async (request, response) => {
 
 export const getCategory = async (request, response) => {
     try {
-      const category = await Category.find({isdisable: true});
+      // const category = await Category.find({isdisable: true});
+      const category = await Category.find();
       response.status(201).json(category);
     } catch (error) {
         response.status(500).json({ error: "Error get the category" });

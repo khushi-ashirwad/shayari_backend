@@ -8,9 +8,11 @@ const app = express();
 const PORT = 8001;
 
 app.use(cors());
-app.use(bodyParser.json({extended:true}))
+app.use(bodyParser.json({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use("/", route);
+app.use(express.static('uploads'))
 connection();
 
 app.listen(PORT, () => console.log(`Running server ${PORT}`));
