@@ -11,6 +11,7 @@ export const addCategory = async (request, response) => {
       name: request.body.name,
       description: request.body.description,
       file: `http://localhost:8001/${request.file.filename}`,
+      type:request.body.type
     });
     newImage
       .save()

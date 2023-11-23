@@ -1,31 +1,21 @@
 import express from "express";
 import {
-  deleteQuotes,
+  deleteQuotesshayari,
   getIdQuotes,
-  getallQuotes,
-  manageQuotes,
-  updateQuotes,
-} from "../controller.js/quotes-controller.js";
+  getallcontant,
+  manageQuotesShayari,
+  updateQuotesshayari,
+} from "../controller/quotes-controller.js";
 import {
   addCategory,
   deleteCategory,
   getCategory,
   updateCategory,
-} from "../controller.js/category-controller.js";
+} from "../controller/category-controller.js";
 import {
-  addShayari,
-  deleteShyari,
   getAllshayari,
   getIdshayari,
-  updateShyari,
-} from "../controller.js/shayari-controller.js";
-import path from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-
-const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+} from "../controller/shayari-controller.js";
 
 const route = express.Router();
 import multer from "multer";
@@ -55,15 +45,12 @@ route.get("/category/get", getCategory);
 route.put("/category/update/:id", updateCategory);
 route.delete("/category/delete/:id", deleteCategory);
 
-route.post("/quotes/add", manageQuotes);
-route.get("/quotes/get", getallQuotes);
+route.post("/quotesshayari/add", manageQuotesShayari);
+route.get("/content/get", getallcontant);
 route.get("/quotes/get/:id", getIdQuotes);
-route.put("/quotes/update/:id", updateQuotes);
-route.delete("/quotes/delete/:id", deleteQuotes);
+route.put("/content/update/:id", updateQuotesshayari);
+route.delete("/content/delete/:id", deleteQuotesshayari);
 
-route.post("/shayari/add", addShayari);
 route.get("/shayari/get", getAllshayari);
 route.get("/shayari/get/:id", getIdshayari);
-route.put("/shayari/update/:id", updateShyari);
-route.delete("/shayari/delete/:id", deleteShyari);
 export default route;
