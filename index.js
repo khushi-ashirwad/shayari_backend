@@ -13,6 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/", route);
 app.use(express.static('uploads'))
+app.use(express.static('imageupload'))
 connection();
 
 app.listen(PORT, () => console.log(`Running server ${PORT}`));

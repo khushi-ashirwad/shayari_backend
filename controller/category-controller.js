@@ -1,22 +1,24 @@
-
 import Category from "../modal/category.js";
-import fs from "fs"
+import fs from "fs";
+import Quotesshyari from "../modal/quotes&shayari.js";
 
 export const addCategory = async (request, response) => {
   try {
     if (!request.file) {
-      return response.status(400).send('No file uploaded.');
+      return response.status(400).send("No file uploaded.");
     }
     const newImage = new Category({
       name: request.body.name,
       description: request.body.description,
       file: `http://localhost:8001/${request.file.filename}`,
-      type:request.body.type
+      type: request.body.type,
     });
     newImage
       .save()
       .then(() => response.status(200).json(newImage))
-      .catch((error) => response.status(500).json({ error: "Error creating the category" }));
+      .catch((error) =>
+        response.status(500).json({ error: "Error creating the category" })
+      );
   } catch (error) {
     response.status(500).json({ error: "Error creating the category" });
   }
@@ -24,9 +26,16 @@ export const addCategory = async (request, response) => {
 
 export const updateCategory = async (request, response) => {
   try {
+    const updatedData = request.file
+    ? {
+        ...request.body,
+        file: `http://localhost:8001/${request.file.filename}`,
+      }
+    : request.body;
+
     const category = await Category.findByIdAndUpdate(
       request.params.id,
-      request.body,
+      updatedData,
       {
         new: true,
       }
@@ -36,29 +45,32 @@ export const updateCategory = async (request, response) => {
     }
     response.status(200).json(category);
   } catch (error) {
+    console.log(error);
     response.status(500).json({ error: "Error update the category" });
   }
 };
 
 export const getCategory = async (request, response) => {
-    try {
-      // const category = await Category.find({isdisable: true});
-      const category = await Category.find();
-      response.status(201).json(category);
-    } catch (error) {
-        response.status(500).json({ error: "Error get the category" });
-    }
-  };
+  try {
+    // const category = await Category.find({isdisable: true});
+    const category = await Category.find();
+    response.status(201).json(category);
+  } catch (error) {
+    response.status(500).json({ error: "Error get the category" });
+  }
+};
 
 export const deleteCategory = async (request, response) => {
   try {
+    await Quotesshyari.deleteMany({ category: request.params.id });
     const category = await Category.deleteOne({ _id: request.params.id });
+
     if (!category) {
       return response.status(404).json({ error: "category not found" });
     }
+
     response.status(200).json(category);
   } catch (error) {
     response.status(500).json({ error: "Error delete the category" });
   }
 };
-

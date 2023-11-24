@@ -1,5 +1,7 @@
-
 import Quotesshyari from "../modal/quotes&shayari.js";
+import Category from "../modal/category.js";
+import schedule from "node-schedule";
+import axios from "axios";
 
 export const manageQuotesShayari = async (request, response) => {
   try {
@@ -7,7 +9,7 @@ export const manageQuotesShayari = async (request, response) => {
     await newItem.save();
     response.status(200).json(newItem);
   } catch (error) {
-    console.log("error",error);
+    console.log("error", error);
     response.status(500).json({ error: "Error creating the Quotes" });
   }
 };
@@ -34,6 +36,7 @@ export const getIdQuotes = async (request, response) => {
       return response.status(200).json(quotes);
     }
   } catch (error) {
+    console.log(error);
     response.status(500).json({ error: "Error fetching the quotes" });
   }
 };
@@ -65,5 +68,54 @@ export const deleteQuotesshayari = async (request, response) => {
     response.json(content);
   } catch (error) {
     response.status(500).json({ error: "Error delete the content" });
+  }
+};
+const random = async () => {
+  const count = await Quotesshyari.countDocuments();
+  console.log("count", count);
+
+  const random = Math.floor(Math.random() * count);
+  console.log("random", random);
+
+  const result = await Quotesshyari.findOne().skip(random).exec();
+
+  console.log("Random Data:", result);
+  return result;
+};
+schedule.scheduleJob("0 0 * * *", async () => {
+  try {
+    const result = await random();
+    const addQuoteResponse = await axios.post(
+      "http://localhost:8001/dailycontent",
+      {
+        content: result.content,
+        category: result.category,
+      }
+    );
+    console.log("Daily quote added successfully:", addQuoteResponse.data);
+  } catch (error) {
+    console.error("Error adding daily quote:", error);
+  }
+});
+
+export const dailyContentadd = async (request, response) => {
+  try {
+    const newItem = new Quotesshyari(request.body);
+    await newItem.save();
+    response.status(200).json({ message: "Daily quote added successfully " });
+    return request.body;
+  } catch (error) {
+    response.status(500).json({ error: "Error adding daily quote:", error });
+    
+  }
+};
+
+export const dailyContentget = async (request, response) => {
+  try {
+    const content = dailyContentadd();
+    console.log("dailycontentget", content);
+    // response.status(200).json(content);
+  } catch (error) {
+    // response.status(500).json({ error: "Error adding daily quote:", error });
   }
 };

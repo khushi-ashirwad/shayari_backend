@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
+import Quotesshyari from "./quotes&shayari.js";
 
-const category = new mongoose.Schema(
+const categorySchema = new mongoose.Schema(
   {
     name: String,
-    description: String,
+    description: { type: String, required: false },
     file: String,
-    type:String,
+    type: String,
     isdisable: {
       type: Boolean,
       default: true,
@@ -14,6 +15,6 @@ const category = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Category = mongoose.model("category", category);
+const Category = mongoose.model("category", categorySchema);
 
 export default Category;
