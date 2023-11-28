@@ -7,8 +7,9 @@ const imageschema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    description: String,
+    description: { type: String, required: false },
     file: String,
+    category: { type: mongoose.Schema.ObjectId, ref: "category" },
   },
   {
     timestamps: true,

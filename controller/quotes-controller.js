@@ -6,10 +6,10 @@ import axios from "axios";
 export const manageQuotesShayari = async (request, response) => {
   try {
     const newItem = new Quotesshyari(request.body);
+    console.log(newItem);
     await newItem.save();
     response.status(200).json(newItem);
   } catch (error) {
-    console.log("error", error);
     response.status(500).json({ error: "Error creating the Quotes" });
   }
 };
@@ -18,9 +18,9 @@ export const getallcontant = async (request, response) => {
   try {
     const content = await Quotesshyari.find().populate("category").exec();
     // Filter out quotes with categories that have isdisable: false
-    const filteredcontent = content.filter(
-      (quote) => quote.category.isdisable === true
-    );
+    const filteredcontent = content.filter((quote) => {
+      return quote.category && quote.category.isdisable === true;
+    });
     response.status(200).json(filteredcontent);
   } catch (error) {
     console.log(error);

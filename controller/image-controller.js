@@ -6,8 +6,7 @@ export const addimage= async (request, response) => {
       return response.status(400).send("No file uploaded.");
     }
     const newImage = new image({
-      name: request.body.name,
-      description: request.body.description,
+      ...request.body,
       file: `http://localhost:8001/${request.file.filename}`,
     });
     newImage
@@ -23,8 +22,11 @@ export const addimage= async (request, response) => {
 
 export const getimage = async (request, response) => {
   try {
-    const category = await image.find();
-    response.status(200).json(category);
+    const category = await image.find().populate("category").exec();
+    const filteredcategory = category.filter(
+      (quote) => quote.category.isdisable === true
+    );
+    response.status(200).json(filteredcategory);
   } catch (error) {
     response.status(500).json({ error: "Error get the category", error });
   }
