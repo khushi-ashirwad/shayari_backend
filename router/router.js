@@ -14,10 +14,6 @@ import {
   getCategory,
   updateCategory,
 } from "../controller/category-controller.js";
-import {
-  getAllshayari,
-  getIdshayari,
-} from "../controller/shayari-controller.js";
 
 const route = express.Router();
 import multer from "multer";
@@ -65,13 +61,11 @@ route.delete("/category/delete/:id", deleteCategory);
 
 route.post("/quotesshayari/add", manageQuotesShayari);
 route.get("/content/get", getallcontant);
-route.get("/quotes/get/:id", getIdQuotes);
+route.get("/content/get/:id", getIdQuotes);
 route.put("/content/update/:id", updateQuotesshayari);
 route.delete("/content/delete/:id", deleteQuotesshayari);
 
 route.route("/dailycontent").post(dailyContentadd).get(dailyContentget);
 route.route('/image').post(imageupload.single("file"),addimage).get(getimage)
 route.route('/image/:id').put(imageupload.single("file"),updateimage).delete(deleteimage)
-route.get("/shayari/get", getAllshayari);
-route.get("/shayari/get/:id", getIdshayari);
 export default route;
