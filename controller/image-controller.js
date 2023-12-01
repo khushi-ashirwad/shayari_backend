@@ -11,7 +11,7 @@ export const addimage= async (request, response) => {
     });
     newImage
       .save()
-      .then(() => response.status(200).json(newImage))
+      .then(() => response.status(200).json({message:"Image quotes added successfully"}))
       .catch((error) =>
         response.status(500).json({ message: "Error creating the category" })
       );
@@ -52,7 +52,7 @@ export const updateimage = async (request, response) => {
     if (!category) {
       return response.status(404).json({message: "Category not found" });
     }
-    response.status(200).json(category);
+    response.status(200).json({message:"Image quotes updated successfully"});
   } catch (error) {
     console.log(error);
     response.status(500).json({ message: `Error update the category:${error}`});
@@ -63,9 +63,9 @@ export const deleteimage = async(request,response)=>{
     try{
         const category = await image.deleteOne({ _id: request.params.id });
         if (!category) {
-          return response.status(404).json({ message: "category not found" });
+          return response.status(404).json({ message: "Image quotes not found" });
         }
-        response.status(200).json(category);
+        response.status(200).json({message:"Image quotes deleted"});
     }catch(error){
         response.status(500).json({message: `Error update the category:${error}` });
     }

@@ -5,7 +5,7 @@ import Quotesshyari from "../modal/quotes&shayari.js";
 export const addCategory = async (request, response) => {
   try {
     if (!request.file) {
-      return response.status(400).send("No file uploaded.");
+      return response.status(400).json({message:"No file uploaded."});
     }
     const newImage = new Category({
       name: request.body.name,
@@ -15,7 +15,7 @@ export const addCategory = async (request, response) => {
     });
     newImage
       .save()
-      .then(() => response.status(200).json(newImage))
+      .then(() => response.status(200).json({message:"category added successfully"}))
       .catch((error) => response.status(500).json({ message: `${error}` }));
   } catch (error) {
     response
@@ -43,7 +43,7 @@ export const updateCategory = async (request, response) => {
     if (!category) {
       return response.status(404).json({ message: "Category not found" });
     }
-    response.status(200).json(category);
+    response.status(200).json({message:"Category sucessfully updated"});
   } catch (error) {
     console.log(error);
     response
@@ -71,7 +71,7 @@ export const deleteCategory = async (request, response) => {
       return response.status(404).json({ message: "category not found" });
     }
 
-    response.status(200).json(category);
+    response.status(200).json({message:"Category deleted"});
   } catch (error) {
     response
       .status(500)
