@@ -13,10 +13,10 @@ export const addimage= async (request, response) => {
       .save()
       .then(() => response.status(200).json({message:"Image quotes added successfully"}))
       .catch((error) =>
-        response.status(500).json({ message: "Error creating the category" })
+        response.status(500).json({ message: "Error creating the image content" })
       );
   } catch (error) {
-    response.status(500).json({ message: `Error creating the category:${error}` });
+    response.status(500).json({ message: `Error creating the image content:${error}` });
   }
 };
 
@@ -28,7 +28,7 @@ export const getimage = async (request, response) => {
     );
     response.status(200).json(filteredcategory);
   } catch (error) {
-    response.status(500).json({ message: `Error get the category error:${error}` });
+    response.status(500).json({ message: `Error get the image content error:${error}` });
   }
 };
 
@@ -55,7 +55,7 @@ export const updateimage = async (request, response) => {
     response.status(200).json({message:"Image quotes updated successfully"});
   } catch (error) {
     console.log(error);
-    response.status(500).json({ message: `Error update the category:${error}`});
+    response.status(500).json({ message: `Error update the image content:${error}`});
   }
 };
 
@@ -67,6 +67,6 @@ export const deleteimage = async(request,response)=>{
         }
         response.status(200).json({message:"Image quotes deleted"});
     }catch(error){
-        response.status(500).json({message: `Error update the category:${error}` });
+        response.status(500).json({message: `Error update the image content:${error}` });
     }
 }

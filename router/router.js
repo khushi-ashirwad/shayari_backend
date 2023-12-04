@@ -1,7 +1,8 @@
 import express from "express";
 import {
-  dailyContentadd,
   dailyContentget,
+  dailyquotesadd,
+  dailyshayariadd,
   deleteQuotesshayari,
   getIdQuotes,
   getallcontant,
@@ -65,7 +66,8 @@ route.get("/content/get/:id", getIdQuotes);
 route.put("/content/update/:id", updateQuotesshayari);
 route.delete("/content/delete/:id", deleteQuotesshayari);
 
-route.route("/dailycontent").post(dailyContentadd).get(dailyContentget);
+route.route("/dailyquotes").post(dailyquotesadd).get(dailyContentget);
+route.route("/dailyshayari").post(dailyshayariadd)
 route.route('/image').post(imageupload.single("file"),addimage).get(getimage)
 route.route('/image/:id').put(imageupload.single("file"),updateimage).delete(deleteimage)
 export default route;
