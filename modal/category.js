@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import Quotesshyari from "./quotes&shayari.js";
 
 const categorySchema = new mongoose.Schema(
   {
@@ -14,6 +13,7 @@ const categorySchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 
 const Category = mongoose.model("category", categorySchema);
 

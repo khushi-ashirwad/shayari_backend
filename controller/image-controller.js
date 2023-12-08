@@ -1,3 +1,4 @@
+import { request } from "express";
 import image from "../modal/image.js";
 
 export const addimage= async (request, response) => {
@@ -11,9 +12,10 @@ export const addimage= async (request, response) => {
     });
     newImage
       .save()
-      .then(() => response.status(200).json({message:"Image quotes added successfully"}))
+      .then(() => response.status(200).json({message:"Image content added successfully"}))
       .catch((error) =>
-        response.status(500).json({ message: "Error creating the image content" })
+     {
+        response.status(500).json({ message: "Error creating the image content" })}
       );
   } catch (error) {
     response.status(500).json({ message: `Error creating the image content:${error}` });
@@ -23,18 +25,31 @@ export const addimage= async (request, response) => {
 export const getimage = async (request, response) => {
   try {
     const category = await image.find().populate("category").exec();
-    const filteredcategory = category.filter(
-      (quote) => quote.category.isdisable === true
-    );
-    response.status(200).json(filteredcategory);
+    const filteredcontent = category.filter((quote) => {
+      return quote.category && quote.category.isdisable === true;
+    });
+    response.status(200).json(filteredcontent);
   } catch (error) {
     response.status(500).json({ message: `Error get the image content error:${error}` });
   }
 };
 
+export const getIdimage = async(request,response)=>{
+  try {
+    const Image = await image.findById(request.params.id).populate("category").exec();
+    if (!Image) {
+      return response.status(404).json({ message: "image content not found" });
+    } else {
+      return response.status(200).json(Image);
+    }
+  } catch (error) {
+    response
+      .status(500)
+      .json({ message: `Error fetching the quotes:${error}` });
+  }
+}
 export const updateimage = async (request, response) => {
   try {
-    console.log("request body",request.body);
     const updatedData = request.file
       ? {
           ...request.body,
@@ -52,9 +67,8 @@ export const updateimage = async (request, response) => {
     if (!category) {
       return response.status(404).json({message: "Category not found" });
     }
-    response.status(200).json({message:"Image quotes updated successfully"});
+    response.status(200).json({message:"Image content updated successfully"});
   } catch (error) {
-    console.log(error);
     response.status(500).json({ message: `Error update the image content:${error}`});
   }
 };
@@ -63,9 +77,9 @@ export const deleteimage = async(request,response)=>{
     try{
         const category = await image.deleteOne({ _id: request.params.id });
         if (!category) {
-          return response.status(404).json({ message: "Image quotes not found" });
+          return response.status(404).json({ message: "Image content not found" });
         }
-        response.status(200).json({message:"Image quotes deleted"});
+        response.status(200).json({message:"Image content deleted"});
     }catch(error){
         response.status(500).json({message: `Error update the image content:${error}` });
     }

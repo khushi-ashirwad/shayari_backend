@@ -6,6 +6,7 @@ const imageschema = new mongoose.Schema(
     issensitive: {
       type: Boolean,
       default: true,
+      required:false
     },
     description: { type: String, required: false },
     file: String,

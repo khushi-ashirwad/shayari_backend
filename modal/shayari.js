@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const quotesshayariSchema = new mongoose.Schema(
+const shayariSchema = new mongoose.Schema(
   {
     content: String,
     category: { type: mongoose.Schema.ObjectId, ref: "category" },
@@ -11,5 +11,5 @@ const quotesshayariSchema = new mongoose.Schema(
   }
 );
 
-const Quotesshyari = mongoose.model("quotes&shayari", quotesshayariSchema);
-export default Quotesshyari;
+const Shayari = mongoose.model("shayari", shayariSchema);
+export default Shayari;

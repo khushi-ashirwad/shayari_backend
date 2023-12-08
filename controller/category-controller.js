@@ -1,6 +1,6 @@
 import Category from "../modal/category.js";
 
-import Quotesshyari from "../modal/quotes&shayari.js";
+import Quotesshyari from "../modal/quotes.js";
 
 export const addCategory = async (request, response) => {
   try {
@@ -41,11 +41,10 @@ export const updateCategory = async (request, response) => {
       }
     );
     if (!category) {
-      return response.status(404).json({ message: "Category not found" });
+      return response.status(404).json({message: "Category not found" });
     }
-    response.status(200).json({message:"Category sucessfully updated"});
+    response.status(200).json({message:"Category updated successfully"});
   } catch (error) {
-    console.log(error);
     response
       .status(500)
       .json({ message: `Error update the category:${error}` });
@@ -54,7 +53,6 @@ export const updateCategory = async (request, response) => {
 
 export const getCategory = async (request, response) => {
   try {
-    // const category = await Category.find({isdisable: true});
     const category = await Category.find();
     response.status(201).json(category);
   } catch (error) {
@@ -66,13 +64,13 @@ export const deleteCategory = async (request, response) => {
   try {
     await Quotesshyari.deleteMany({ category: request.params.id });
     const category = await Category.deleteOne({ _id: request.params.id });
-
     if (!category) {
       return response.status(404).json({ message: "category not found" });
     }
 
     response.status(200).json({message:"Category deleted"});
   } catch (error) {
+
     response
       .status(500)
       .json({ message: `Error deleteing the category:${error}` });
