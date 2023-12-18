@@ -1,6 +1,7 @@
 import Quotes from "../modal/quotes.js";
 import schedule from "node-schedule";
 import axios from "axios";
+import Shayari from "../modal/shayari.js";
 
 export const manageQuotes = async (request, response) => {
   try {
@@ -28,7 +29,9 @@ export const getallquotes = async (request, response) => {
 };
 export const getIdQuotes = async (request, response) => {
   try {
-    const quotes = await Quotes.findById(request.params.id).populate("category").exec();
+    const quotes = await Quotes.findById(request.params.id)
+      .populate("category")
+      .exec();
     if (!quotes) {
       return response.status(404).json({ message: "quotes not found" });
     } else {
@@ -72,96 +75,34 @@ export const deleteQuotes = async (request, response) => {
     response.status(500).json({ message: `Error delete the quotes:${error}` });
   }
 };
-const randomQuotes = async () => {
+const random = async () => {
   const content = await Quotes.find().populate("category").exec();
   // Filter out quotes with categories that have isdisable: false
   const filteredcontent = content.filter((quote) => {
     return quote.category && quote.category.type === "quotes";
   });
-  console.log("filteredcontent", filteredcontent.length);
 
   const random = Math.floor(Math.random() * filteredcontent.length);
-  console.log("random", random);
-
   const result = await Quotes.findOne()
     .skip(random)
     .populate("category")
     .exec();
 
-  console.log("Random Data:", result);
-  return result;
-};
-const randomShayari = async () => {
-  const content = await Quotes.find().populate("category").exec();
-  // Filter out quotes with categories that have isdisable: false
-  const filteredcontent = content.filter((quote) => {
-    return quote.category && quote.category.type === "shayari";
-  });
-  console.log("filteredcontent", filteredcontent.length);
-
-  const random = Math.floor(Math.random() * filteredcontent.length);
-  console.log("random", random);
-
-  const result = await Quotes.findOne()
-    .skip(random)
-    .populate("category")
-    .exec();
-
-  console.log("Random Data:", result);
   return result;
 };
 
 schedule.scheduleJob("0 0 * * *", async () => {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    // Check if a user has added quotes today
-    const userAddedQuotesToday = await Quotes.find({
-      $and: [{ createdAt: { $gte: today } }, { type: "dailycontent" }],
-    })
-      .populate("category")
-      .exec();
-    const latestQuote = userAddedQuotesToday.filter(
-      (value) =>
-        value.category.type === "quotes" &&
-        value.createdAt.toDateString() === today.toDateString()
+    const result = await random();
+    const addQuoteResponse = await axios.post(
+      "http://localhost:8001/dailyquotes",
+      {
+        type: "dailycontent",
+        content: result.content,
+        category: result.category,
+      }
     );
-    console.log("userAddedQuotesToday", latestQuote);
-    if (latestQuote.length > 0) {
-      console.log("Latest quote is in the 'quotes' category:");
-    } else {
-      const result = await randomQuotes();
-      const addQuoteResponse = await axios.post(
-        "http://localhost:8001/dailyquotes",
-        {
-          type: "dailycontent",
-          content: result.content,
-          category: result.category,
-        }
-      );
-      console.log("result", result);
-      console.log("Daily quote added successfully:", addQuoteResponse.data);
-    }
-    const latestShayari = userAddedQuotesToday.filter(
-      (value) =>
-        value.category.type === "shayari" &&
-        value.createdAt.toDateString() === today.toDateString()
-    );
-    if (latestShayari.length > 0) {
-      console.log("Latest quote is in the 'shayari' category:");
-    } else {
-      const result = await randomShayari();
-      const addQuoteResponse = await axios.post(
-        "http://localhost:8001/dailyshayari",
-        {
-          type: "dailycontent",
-          content: result.content,
-          category: result.category,
-        }
-      );
-      console.log("result", result);
-      console.log("Daily shayari added successfully:", addQuoteResponse.data);
-    }
+    console.log(addQuoteResponse.data);
   } catch (error) {
     console.error("Error processing scheduled job:", error);
   }
@@ -183,41 +124,12 @@ export const dailyquotesadd = async (request, response) => {
     );
     if (latestQuotes.length > 0) {
       response
-        .status(400)
+        .status(200)
         .json({ message: "You can only add one quote per day" });
     } else {
       const newItem = new Quotes(request.body);
-      // await newItem.save();
+      await newItem.save();
       response.status(200).json({ message: "Daily quote added successfully" });
-    }
-  } catch (error) {
-    response
-      .status(500)
-      .json({ message: `Quote already added today:${error}` });
-  }
-};
-export const dailyshayariadd = async (request, response) => {
-  try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const userAddedQuotesToday = await Quotes.find({
-      $and: [{ createdAt: { $gte: today } }, { type: "dailycontent" }],
-    })
-      .populate("category")
-      .exec();
-    const latestShayari = userAddedQuotesToday.filter(
-      (value) =>
-        value.category.type === "shayari" &&
-        value.createdAt.toDateString() === today.toDateString()
-    );
-    if (latestShayari.length > 0) {
-      response
-        .status(400)
-        .json({ message: "You can only add one quote per day" });
-    } else {
-      const newItem = new Quotes(request.body);
-      // await newItem.save();
-      response.status(200).json({ message: "Daily shayari added successfully" });
     }
   } catch (error) {
     response
@@ -231,16 +143,26 @@ export const dailyContentget = async (request, response) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     // Check if a user has added quotes today
-    const userAddedQuotesToday = await Quotes.find({
+    const userAddedQuotesToday = await Quotes.findOne({
       $and: [{ createdAt: { $gte: today } }, { type: "dailycontent" }],
     })
       .populate("category")
       .exec();
 
-    if (userAddedQuotesToday.length > 0) {
-      // If the user has added a quote today, retrieve the latest one
-      const latestQuote = userAddedQuotesToday.slice(-2);
-      response.status(200).json(latestQuote);
+    const userAddedShayaritoday = await Shayari.findOne({
+      $and: [{ createdAt: { $gte: today } }, { type: "dailycontent" }],
+    })
+      .populate("category")
+      .exec();
+
+    const combinearray = [userAddedQuotesToday, userAddedShayaritoday];
+
+    if (userAddedQuotesToday && userAddedShayaritoday) {
+      response.status(200).json(combinearray);
+    } else if (userAddedQuotesToday) {
+      response.status(200).json(userAddedQuotesToday);
+    } else if (userAddedShayaritoday) {
+      response.status(200).json(userAddedShayaritoday);
     } else {
       response.status(200).json({ message: "yet today content not added" });
     }

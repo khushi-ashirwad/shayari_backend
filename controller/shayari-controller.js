@@ -79,23 +79,55 @@ const random = async () => {
   const content = await Shayari.countDocuments();
 
   const random = Math.floor(Math.random() * content.length);
-  console.log("random", random);
 
   const result = await Shayari.findOne()
     .skip(random)
     .populate("category")
     .exec();
 
-  console.log("Random Data:", result);
   return result;
 };
 
-random()
 schedule.scheduleJob("0 0 * * *", async () => {
-    try{
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-    }catch{
- console.error("Error processing scheduled job:", error);
-    }
+  try {
+    const result = await random();
+    const addQuoteResponse = await axios.post(
+      "http://localhost:8001/dailyshayari",
+      {
+        type: "dailycontent",
+        content: result.content,
+        category: result.category,
+      }
+    );
+
+    console.log(addQuoteResponse.data);
+  } catch (error){
+    console.error("Error processing scheduled job:", error);
+  }
 });
+
+export const dailyshayariadd = async (request, response) => {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const userAddedQuotesToday = await Shayari.find({
+        $and: [{ createdAt: { $gte: today } }, { type: "dailycontent" }],
+      })
+        .populate("category")
+        .exec();
+      if (userAddedQuotesToday.length > 0) {
+        response
+          .status(200)
+          .json({ message: "You can only add one shayari per day" });
+      } else {
+        const newItem = new Shayari(request.body);
+        console.log("newitem",newItem);
+        await newItem.save();         
+        response.status(200).json({ message: "Daily shayari added successfully" });
+      }
+    } catch (error) {
+      response
+        .status(500)
+        .json({ message: `Quote already added today:${error}` });
+    }
+  };

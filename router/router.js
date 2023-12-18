@@ -2,7 +2,6 @@ import express from "express";
 import {
   dailyContentget,
   dailyquotesadd,
-  dailyshayariadd,
   deleteQuotes,
   getIdQuotes,
   getallquotes,
@@ -19,7 +18,7 @@ import {
 const route = express.Router();
 import multer from "multer";
 import { addimage, deleteimage,  getIdimage,  getimage,  updateimage } from "../controller/image-controller.js";
-import { addShayari, deleteShayari, getIdShayari, getShayari, updateShayari } from "../controller/shayari-controller.js";
+import { addShayari, deleteShayari, getIdShayari, getShayari, updateShayari,dailyshayariadd } from "../controller/shayari-controller.js";
 
 const Storage = multer.diskStorage({
   destination: function (request, file, cb) {
